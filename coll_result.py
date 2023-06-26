@@ -4,7 +4,6 @@ import customtkinter as ctk
 from PIL import Image ,ImageTk
 from tkinter import ttk, filedialog
 from tkinter.messagebox import showerror, showinfo
-# pd.options.mode.chained_assignment = None
 
 # Defining Main theme of all widgets
 ctk.set_appearance_mode( "dark" )
@@ -37,7 +36,6 @@ def analysResult() :
 
     col_name = col_name[4:len(col_name)-4]
     max_mark = []
-    # max_mark = [ 150, 150, 150, 150, 50, 150, 150, 50, 50, 50]
 
     for i in range( len(col_name) ) :
         max_mark.append(df[col_name[i]][2]+df[unnamed_col[i]][2])
@@ -45,6 +43,7 @@ def analysResult() :
     sheet_structure = {
         "Subject" : col_name,
         "Number of Students" : [i for i in range(len(col_name))],
+        "Absent" : [i for i in range(len(col_name))],
         "Pass" : [i for i in range(len(col_name))],
         "Less than 60%" : [i for i in range(len(col_name))],
         "Between 60 to 74%" : [i for i in range(len(col_name))],
@@ -54,12 +53,17 @@ def analysResult() :
         "Pass Percentage" : [i for i in range(len(col_name))],
     }
 
-    # df[col_name[4]][2:] = df[col_name[4]][2:]/2
-
     for i in range( len(col_name) ) :
 
         student_count = df[col_name[i]][3:] >= 0 
         sheet_structure["Number of Students"][i] = student_count.value_counts()[1]
+
+        abs_count = df[col_name[i]][3:] == 0
+        abs_count = dict(abs_count.value_counts())
+        abst = 0
+        if True in abs_count.keys() :
+            abst = abs_count[True]
+        sheet_structure["Absent"][i] = abst
         
         less_sixty = (df[col_name[i]][3:] + df[unnamed_col[i]][3:]) <= int(max_mark[i]*0.6)
         val = dict(less_sixty.value_counts())
@@ -81,7 +85,7 @@ def analysResult() :
             val = 0
         sheet_structure["Between 60 to 74%"][i] = val
 
-        more_seventy = (df[col_name[i]][3:] + df[unnamed_col[i]][3:]) >= int(max_mark[i]*0.75)
+        more_seventy = (df[col_name[i]][3:] + df[unnamed_col[i]][3:]) >= max_mark[i]*0.75
         val = dict(more_seventy.value_counts())
         if True in val.keys() :
             val = val[True]
@@ -92,17 +96,17 @@ def analysResult() :
         max_score = (df[col_name[i]][3:] + df[unnamed_col[i]][3:]).max()
         sheet_structure["Maximum Score"][i] = max_score
 
-        pass_1 = df[col_name[i]][3:] < max_mark[i]*0.33
-        pass_2 = df[unnamed_col[i]][3:] < max_mark[i]*0.33
-        pass_3 = (df[col_name[i]][3:] + df[unnamed_col[i]][3:]) < max_mark[i]*0.4
+        pass_1 = df[col_name[i]][3:] >= df[col_name[i]][2]*0.3
+        pass_2 = df[unnamed_col[i]][3:] >= df[unnamed_col[i]][2]*0.3
+        pass_3 = (df[col_name[i]][3:] + df[unnamed_col[i]][3:]) >= max_mark[i]*0.4
         final_pass = pass_1 & pass_2
         final_pass = final_pass & pass_3
+        val1 = 0
         val = dict(final_pass.value_counts())
         if True in val.keys() :
-            val = val[True]
-        else :
-            val = 0
-        sheet_structure["Pass"][i] = sheet_structure["Number of Students"][i] - val
+            val1 = val[True]
+        sheet_structure["Pass"][i] = val1
+        # sheet_structure["Pass"][i] = sheet_structure["Number of Students"][i] - val
 
         sheet_structure["Pass Percentage"][i] = ((sheet_structure["Pass"][i])/(sheet_structure["Number of Students"][i])*100)
 
