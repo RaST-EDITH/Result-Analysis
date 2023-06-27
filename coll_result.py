@@ -18,6 +18,14 @@ def Imgo(file,w,h) :
     pht=ImageTk.PhotoImage(img.resize((w,h), Image.Resampling.LANCZOS ))
     return pht
 
+def checkFile() :
+
+    if ( file[0] == "" ) :
+        showerror( title = "Empty Field", message = "No file found")
+
+    else :
+        analysResult()
+
 def analysResult() :
 
     df = pd.read_excel( file[0] )
@@ -35,13 +43,18 @@ def analysResult() :
             unnamed_col.append( i )
 
     col_name = col_name[4:len(col_name)-4]
+    
+    facl_name = []
+    for i in range( len(col_name) ) :
+        facl_name.append(df[col_name[i]][0])
+    
     max_mark = []
-
     for i in range( len(col_name) ) :
         max_mark.append(df[col_name[i]][2]+df[unnamed_col[i]][2])
 
     sheet_structure = {
         "Subject" : col_name,
+        "Faculty Name" : facl_name,
         "Number of Students" : [i for i in range(len(col_name))],
         "Absent" : [i for i in range(len(col_name))],
         "Pass" : [i for i in range(len(col_name))],
@@ -157,6 +170,9 @@ def firstPage() :
     id_page.pack( fill = "both", expand = True )
 
     # Image on top
+    back_image = Imgo(r"C:\Users\ASUS\OneDrive\Documents\GitHub\Result-Analysis\try2.jpg", wid+300, hgt+170)
+    id_page.create_image(0, 0, image = back_image, anchor = "nw")
+    
     jss_image = Imgo(r"C:\Users\ASUS\OneDrive\Documents\GitHub\Result-Analysis\jss.png", 135, 135)
     id_page.create_image(40, 20+30, image = jss_image, anchor = "nw")
     
@@ -169,9 +185,9 @@ def firstPage() :
                                 placeholder_text = "Enter Path", text_font = ( font[4], 20 ), 
                                  width = 580, height = 30, corner_radius = 14,
                                   placeholder_text_color = "#494949", text_color = "#242424", 
-                                   fg_color = "#c3c3c3", bg_color = "black", 
+                                   fg_color = "#c3c3c3", bg_color = "#faaa21", 
                                     border_color = "white", border_width = 3)
-    file_path_win = id_page.create_window( 300, 350, anchor = "nw", window = file_path )
+    file_path_win = id_page.create_window( 80, 300, anchor = "nw", window = file_path )
 
     file_formate = [( "Excel file", "*.xlsx")]
 
@@ -179,10 +195,10 @@ def firstPage() :
     add_bt = ctk.CTkButton( master = root, 
                              text = "Add..", text_font = ( font[1], 20 ), 
                               width = 60, height = 40, corner_radius = 14,
-                               bg_color = "black", fg_color = "red", text_color = "white", 
+                               bg_color = "#faaa21", fg_color = "red", text_color = "white", 
                                 hover_color = "#ff5359", border_width = 0,
                                  command = lambda : openingFile( file_path, file_formate) )
-    add_bt_win = id_page.create_window( 1050, 350-2, anchor = "nw", window = add_bt )
+    add_bt_win = id_page.create_window( 830, 300-2, anchor = "nw", window = add_bt )
 
     # Adding file path
     anal_bt = ctk.CTkButton( master = root, 
@@ -190,7 +206,7 @@ def firstPage() :
                               width = 60, height = 40, corner_radius = 14,
                                bg_color = "black", fg_color = "red", text_color = "white", 
                                 hover_color = "#ff5359", border_width = 0,
-                                 command = lambda : analysResult() )
+                                 command = lambda : checkFile() )
     anal_bt_win = id_page.create_window( 700, 550, anchor = "nw", window = anal_bt )
 
     root.mainloop()
