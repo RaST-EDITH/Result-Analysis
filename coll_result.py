@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 from tkinter import *
 import customtkinter as ctk
@@ -142,8 +143,7 @@ def openingFile( file_path, file_formate ) :
     else :
 
         # Getting path of file from filedialog
-        open_file = filedialog.askopenfilename( initialdir = r'C:\Users\ASUS\Pictures', 
-                                                    title = "Open file", filetypes = file_formate )
+        open_file = filedialog.askopenfilename( initialdir = os.getcwd(), title = "Open file", filetypes = file_formate )
 
     # Checking for empty address
     if ( open_file != "" ) :
@@ -170,44 +170,51 @@ def firstPage() :
     id_page.pack( fill = "both", expand = True )
 
     # Image on top
-    back_image = Imgo(r"C:\Users\ASUS\OneDrive\Documents\GitHub\Result-Analysis\try2.jpg", wid+300, hgt+170)
+    back_image = Imgo( os.path.join( os.getcwd(), "try2a.jpg"), wid+300, hgt+170)
     id_page.create_image(0, 0, image = back_image, anchor = "nw")
     
-    jss_image = Imgo(r"C:\Users\ASUS\OneDrive\Documents\GitHub\Result-Analysis\jss.png", 135, 135)
+    jss_image = Imgo( os.path.join( os.getcwd(), "jss.png"), 135, 135)
     id_page.create_image(40, 20+30, image = jss_image, anchor = "nw")
     
     # Heading
     id_page.create_text(840,80+30,text="JSS ACADEMY OF TECHNICAL EDUCATION", 
-                            font = ( font[0], 35, "bold" ), fill = "#1c54df" )
+                            font = ( font[0], 35, "bold" ), fill = "#00234f" )
     
     # Accessing the file
     file_path = ctk.CTkEntry( master = root, 
-                                placeholder_text = "Enter Path", text_font = ( font[4], 20 ), 
-                                 width = 580, height = 30, corner_radius = 14,
+                                placeholder_text = "Enter Path", text_font = ( font[2], 20 ), 
+                                 width = 550, height = 30, corner_radius = 14,
                                   placeholder_text_color = "#494949", text_color = "#242424", 
-                                   fg_color = "#c3c3c3", bg_color = "#faaa21", 
-                                    border_color = "white", border_width = 3)
-    file_path_win = id_page.create_window( 80, 300, anchor = "nw", window = file_path )
+                                   fg_color = "#ffd371", bg_color = "#faaa21", 
+                                    border_color = "#00234f", border_width = 4)
+    file_path_win = id_page.create_window( 80, 350+30, anchor = "nw", window = file_path )
 
     file_formate = [( "Excel file", "*.xlsx")]
 
+    # # Frame
+    # mess = ctk.CTkFrame( master = id_page, 
+    #                       width = 780, height = 300, corner_radius = 30,
+    #                        bg_color = "#d5eafd", fg_color = "#97e1fe",
+    #                         border_color = "#4d89eb", border_width = 6)
+    # mess.place_configure( x = 280, y = 480, anchor = "nw")
+
     # Adding file path
     add_bt = ctk.CTkButton( master = root, 
-                             text = "Add..", text_font = ( font[1], 20 ), 
-                              width = 60, height = 40, corner_radius = 14,
-                               bg_color = "#faaa21", fg_color = "red", text_color = "white", 
+                             text = "Add", text_font = ( font[1], 20 ), 
+                              width = 60, height = 41, corner_radius = 14,
+                               bg_color = "#faaa21", fg_color = "#e61800", text_color = "white", 
                                 hover_color = "#ff5359", border_width = 0,
                                  command = lambda : openingFile( file_path, file_formate) )
-    add_bt_win = id_page.create_window( 830, 300-2, anchor = "nw", window = add_bt )
+    add_bt_win = id_page.create_window( 800-10, 350-1+30, anchor = "nw", window = add_bt )
 
     # Adding file path
     anal_bt = ctk.CTkButton( master = root, 
                              text = "Analyse", text_font = ( font[1], 20 ), 
                               width = 60, height = 40, corner_radius = 14,
-                               bg_color = "black", fg_color = "red", text_color = "white", 
+                               bg_color = "#f78f1c", fg_color = "#e61800", text_color = "white", 
                                 hover_color = "#ff5359", border_width = 0,
                                  command = lambda : checkFile() )
-    anal_bt_win = id_page.create_window( 700, 550, anchor = "nw", window = anal_bt )
+    anal_bt_win = id_page.create_window( 400, 520, anchor = "nw", window = anal_bt )
 
     root.mainloop()
 
