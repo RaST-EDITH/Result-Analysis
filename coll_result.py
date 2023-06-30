@@ -131,6 +131,7 @@ def analysResult() :
     analysis.to_excel( writer, "Marks ana")
     writer.save()
     showinfo( title = "Done", message = "Analysis Done" )
+    os.startfile( destination )
 
 def openingFile( file_path, file_formate ) :
 
@@ -190,13 +191,6 @@ def firstPage() :
     file_path_win = id_page.create_window( 80, 350+30, anchor = "nw", window = file_path )
 
     file_formate = [( "Excel file", "*.xlsx")]
-
-    # # Frame
-    # mess = ctk.CTkFrame( master = id_page, 
-    #                       width = 780, height = 300, corner_radius = 30,
-    #                        bg_color = "#d5eafd", fg_color = "#97e1fe",
-    #                         border_color = "#4d89eb", border_width = 6)
-    # mess.place_configure( x = 280, y = 480, anchor = "nw")
 
     # Adding file path
     add_bt = ctk.CTkButton( master = root, 
