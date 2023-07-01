@@ -171,10 +171,10 @@ def firstPage() :
     id_page.pack( fill = "both", expand = True )
 
     # Image on top
-    back_image = Imgo( os.path.join( os.getcwd(), "try2a.jpg"), wid+300, hgt+170)
+    back_image = Imgo( os.path.join( os.getcwd(), "images\\back.jpg"), wid+300, hgt+170)
     id_page.create_image(0, 0, image = back_image, anchor = "nw")
     
-    jss_image = Imgo( os.path.join( os.getcwd(), "jss.png"), 135, 135)
+    jss_image = Imgo( os.path.join( os.getcwd(), "images\jss.png"), 135, 135)
     id_page.create_image(40, 20+30, image = jss_image, anchor = "nw")
     
     # Heading
