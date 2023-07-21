@@ -6,12 +6,6 @@ from PIL import Image ,ImageTk
 from tkinter import ttk, filedialog
 from tkinter.messagebox import showerror, showinfo
 
-# Defining Main theme of all widgets
-ctk.set_appearance_mode( "dark" )
-ctk.set_default_color_theme( "dark-blue" )
-wid = 1200
-hgt = 700
-
 def Imgo(file,w,h) :
 
     # Image processing
@@ -19,17 +13,29 @@ def Imgo(file,w,h) :
     pht=ImageTk.PhotoImage(img.resize((w,h), Image.Resampling.LANCZOS ))
     return pht
 
-def checkFile() :
+def checkValue( start_range, end_range, spec_val ) :
 
-    if ( file[0] == "" ) :
-        showerror( title = "Empty Field", message = "No file found")
-
-    else :
+    if ( start_range.get() != "" and end_range.get() != "" and data["File"] != "" ) :
+        data["Start"] = int(start_range.get())
+        data["End"] = int(end_range.get())
+        data["Spec"] = spec_val.get().split(",")
+        if ( data["Spec"][0] == "" or data["Spec"][0] == "NA" ) :
+            data["Spec"] = []
+        else :
+            try :
+                for i in range( len(data["Spec"])) :
+                    data["Spec"][i] = int(data["Spec"][i])
+            except :
+                showerror( title = "Invalid Value", message = "Invalid Value Inserted!")
+        
         analysResult()
+    
+    else :
+        showerror( title = "Empty Field", message = "Fill Empty Fields!")
 
 def analysResult() :
 
-    df = pd.read_excel( file[0] )
+    df = pd.read_excel( data["File"] )
 
     row, col = df.shape
     row = row - 3
@@ -85,19 +91,16 @@ def analysResult() :
         "Pass Percentage" : [i for i in range(len(col_name))],
     }
 
-    a = 1900910130001
-    b = 1900910130075
-    spec = [2000910139001, 2000910139005, 2000910139008, 2000910139011]
-
-    # a = 1809113001
-    # b = 1809113060
-    # spec = [1900910139003, 1900910139001, 1900910139007, 1900910139010]
+    a = data["Start"]
+    b = data["End"]
+    spec = data["Spec"]
 
     Branch_1 =  ( df[df.columns[1]][3:] >= a ) & ( df[df.columns[1]][3:] <= b )
 
-    for x in spec :
-        it_1 = df[df.columns[1]][3:] == x
-        Branch_1 = Branch_1 | it_1
+    if len(spec) > 0 :
+        for x in spec :
+            it_1 = df[df.columns[1]][3:] == x
+            Branch_1 = Branch_1 | it_1
 
     for i in range( 0, len(col_name), 2 ) :
 
@@ -106,8 +109,11 @@ def analysResult() :
         student_val = student_count.value_counts()[1]
         student_count = ( ~df[col_name[i]][3:].isnull() ) & student_count & Branch_1
         student_count = dict(student_count.value_counts())
-        sheet_structure["Number of Students"][i] = student_count[True]
-        sheet_structure["Number of Students"][i+1] = student_val - student_count[True]
+        count = 0
+        if True in student_count.keys() :
+            count = student_count[True]
+        sheet_structure["Number of Students"][i] = count
+        sheet_structure["Number of Students"][i+1] = student_val - count
 
 
         # Absent Count
@@ -212,11 +218,17 @@ def analysResult() :
 
 
         # Total Percentage Student Passed
-        sheet_structure["Pass Percentage"][i] = ((sheet_structure["Pass"][i])/(sheet_structure["Number of Students"][i])*100)
-        sheet_structure["Pass Percentage"][i+1] = ((sheet_structure["Pass"][i+1])/(sheet_structure["Number of Students"][i+1])*100)
+        s1 = sheet_structure["Number of Students"][i]
+        if s1 == 0 :
+            s1 = 1
+        s2 = sheet_structure["Number of Students"][i+1]
+        if s2 == 0 :
+            s2 = 1
+        sheet_structure["Pass Percentage"][i] = ((sheet_structure["Pass"][i])/s1*100)
+        sheet_structure["Pass Percentage"][i+1] = ((sheet_structure["Pass"][i+1])/s2*100)
 
     analysis = pd.DataFrame( sheet_structure )
-    destination = file[0].split(".xlsx")[0]
+    destination = data["File"].split(".xlsx")[0]
     destination = destination + "_analysis.xlsx"
     writer = pd.ExcelWriter( destination )
     analysis.to_excel( writer, "Marks ana", index = False )
@@ -240,7 +252,8 @@ def openingFile( file_path, file_formate ) :
     # Checking for empty address
     if ( open_file != "" ) :
     
-        file[0] = open_file
+        # file[0] = open_file
+        data["File"] = open_file
 
         if ( file_path.get() != "" ) :
             file_path.delete( 0, END)
@@ -293,23 +306,36 @@ def firstPage() :
     add_bt_win = id_page.create_window( 800-10, 350-1+30, anchor = "nw", window = add_bt )
 
     # Adding file path
-    anal_bt = ctk.CTkButton( master = root, 
+    analy_bt = ctk.CTkButton( master = root, 
                              text = "Analyse", text_font = ( font[1], 20 ), 
                               width = 60, height = 40, corner_radius = 14,
                                bg_color = "#f78f1c", fg_color = "#e61800", text_color = "white", 
                                 hover_color = "#ff5359", border_width = 0,
-                                 command = lambda : checkFile() )
-    anal_bt_win = id_page.create_window( 400, 520, anchor = "nw", window = anal_bt )
+                                 command = lambda : checkValue( start_range, end_range, spec_val ) )
+    analy_bt_win = id_page.create_window( 400, 520+100, anchor = "nw", window = analy_bt )
 
     root.mainloop()
 
-global root
+if __name__ == "__main__" :
 
-root = ctk.CTk()
-root.title( "Result Analysis" )
-root.geometry( "1200x700+200+80" )
-root.resizable( False, False )
-file = [""]
-font = [ "Tahoma", "Seoge UI", "Heloia", "Book Antiqua", "Microsoft Sans Serif"]
+    # Defining Main theme of all widgets
+    ctk.set_appearance_mode( "dark" )
+    ctk.set_default_color_theme( "dark-blue" )
+    wid = 1200
+    hgt = 700
 
-firstPage()
+    global root
+
+    root = ctk.CTk()
+    root.title( "Result Analysis" )
+    root.geometry( "1200x700+200+80" )
+    root.resizable( False, False )
+    data = {
+        "File" : "",
+        "Start" : 0,
+        "End" : 0,
+        "Spec" : []
+    }
+    font = [ "Tahoma", "Seoge UI", "Heloia", "Book Antiqua", "Microsoft Sans Serif"]
+
+    firstPage()
