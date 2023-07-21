@@ -305,6 +305,33 @@ def firstPage() :
                                  command = lambda : openingFile( file_path, file_formate) )
     add_bt_win = id_page.create_window( 800-10, 350-1+30, anchor = "nw", window = add_bt )
 
+    # Starting Range
+    start_range = ctk.CTkEntry( master = root, 
+                                placeholder_text = "Range From", text_font = ( font[2], 20 ), 
+                                 width = 260, height = 30, corner_radius = 14,
+                                  placeholder_text_color = "#494949", text_color = "#242424", 
+                                   fg_color = "#ffd371", bg_color = "#f7991d", 
+                                    border_color = "#00234f", border_width = 4)
+    start_range_win = id_page.create_window( 80, 350+30+70, anchor = "nw", window = start_range )
+    
+    # Ending Range
+    end_range = ctk.CTkEntry( master = root, 
+                                placeholder_text = "To", text_font = ( font[2], 20 ), 
+                                 width = 260, height = 30, corner_radius = 14,
+                                  placeholder_text_color = "#494949", text_color = "#242424", 
+                                   fg_color = "#ffd371", bg_color = "#f7991d", 
+                                    border_color = "#00234f", border_width = 4)
+    end_range_win = id_page.create_window( 80+363, 350+30+70, anchor = "nw", window = end_range )
+
+    # Specific Values
+    spec_val = ctk.CTkEntry( master = root, 
+                                placeholder_text = "Specific Value", text_font = ( font[2], 20 ), 
+                                 width = 550, height = 30, corner_radius = 14,
+                                  placeholder_text_color = "#494949", text_color = "#242424", 
+                                   fg_color = "#ffd371", bg_color = "#f6911d", 
+                                    border_color = "#00234f", border_width = 4)
+    spec_val_win = id_page.create_window( 80, 350+30+140, anchor = "nw", window = spec_val )
+
     # Adding file path
     analy_bt = ctk.CTkButton( master = root, 
                              text = "Analyse", text_font = ( font[1], 20 ), 
