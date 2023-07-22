@@ -54,6 +54,124 @@ def checkValue( start_range, end_range, spec_val ) :
     except :
         showerror( title = "Invalid", message = "Invalid Entry!!")
 
+def analysResult1() :
+
+    df = pd.read_excel( data["File"] )
+
+    row, col = df.shape
+    row = row - 3
+    column = df.columns
+    col_name = []
+    unnamed_col = []
+
+    for i in column :
+        if "Unnamed" not in i :
+            col_name.append( i )
+        else :
+            unnamed_col.append( i )
+
+    col_name = col_name[4:len(col_name)-4]
+    
+    facl_name = []
+    for i in range( len(col_name) ) :
+        facl_name.append(df[col_name[i]][0])
+    
+    max_mark = []
+    for i in range( len(col_name) ) :
+        max_mark.append(df[col_name[i]][2]+df[unnamed_col[i]][2])
+
+    sheet_structure = {
+        "Subject" : col_name,
+        "Faculty Name" : facl_name,
+        "Number of Students" : [i for i in range(len(col_name))],
+        "Absent" : [i for i in range(len(col_name))],
+        "Pass" : [i for i in range(len(col_name))],
+        "Less than 60%" : [i for i in range(len(col_name))],
+        "Between 60 to 74%" : [i for i in range(len(col_name))],
+        "More than 75%" : [i for i in range(len(col_name))],
+        "Maximum Score" : [i for i in range(len(col_name))],
+        "Out of Mark" : max_mark,
+        "Pass Percentage" : [i for i in range(len(col_name))],
+    }
+
+    for i in range( len(col_name) ) :
+
+        # Student Count
+        student_count = df[col_name[i]][3:] >= 0 
+        sheet_structure["Number of Students"][i] = student_count.value_counts()[1]
+
+
+        # Absent Count
+        abs_count = df[col_name[i]][3:] == 0
+        abs_count = dict(abs_count.value_counts())
+        abst = 0
+        if True in abs_count.keys() :
+            abst = abs_count[True]
+        sheet_structure["Absent"][i] = abst
+        
+
+        # Less Than 60
+        less_sixty = (df[col_name[i]][3:] + df[unnamed_col[i]][3:]) <= int(max_mark[i]*0.6)
+        val = dict(less_sixty.value_counts())
+        if True in val.keys() :
+            val = val[True]
+        else :
+            val = 0
+        sheet_structure["Less than 60%"][i] = val
+
+
+        # Between 60 and 75
+        sixty = (df[col_name[i]][3:] + df[unnamed_col[i]][3:]) > int(max_mark[i]*0.6)
+        seventy = (df[col_name[i]][3:] + df[unnamed_col[i]][3:]) < int(max_mark[i]*0.75)
+        btw_sixty_seventy = sixty & seventy
+        val = dict(btw_sixty_seventy.value_counts())
+        if True in val.keys() :
+            val = val[True]
+        else :
+            val = 0
+        sheet_structure["Between 60 to 74%"][i] = val
+
+
+        # More Than 75
+        more_seventy = (df[col_name[i]][3:] + df[unnamed_col[i]][3:]) >= max_mark[i]*0.75
+        val = dict(more_seventy.value_counts())
+        if True in val.keys() :
+            val = val[True]
+        else :
+            val = 0
+        sheet_structure["More than 75%"][i] = val
+
+
+        # Maximum Score
+        max_score = (df[col_name[i]][3:] + df[unnamed_col[i]][3:]).max()
+        sheet_structure["Maximum Score"][i] = max_score
+
+
+        # Number of Student Passed
+        pass_1 = df[col_name[i]][3:] >= df[col_name[i]][2]*0.3
+        pass_2 = df[unnamed_col[i]][3:] >= df[unnamed_col[i]][2]*0.3
+        pass_3 = (df[col_name[i]][3:] + df[unnamed_col[i]][3:]) >= max_mark[i]*0.4
+        final_pass = pass_1 & pass_2
+        final_pass = final_pass & pass_3
+        val1 = 0
+        val = dict(final_pass.value_counts())
+        if True in val.keys() :
+            val1 = val[True]
+        sheet_structure["Pass"][i] = val1
+
+
+        # Total Percentage Of Student Passed
+        sheet_structure["Pass Percentage"][i] = ((sheet_structure["Pass"][i])/(sheet_structure["Number of Students"][i])*100)
+
+    analysis = pd.DataFrame( sheet_structure )
+    destination = data["File"].split(".xlsx")[0]
+    destination = destination + "_analysis.xlsx"
+    writer = pd.ExcelWriter( destination )
+    analysis.to_excel( writer, "Marks analysis", index = False )
+    writer.save()
+    showinfo( title = "Done", message = "Analysis Done" )
+    os.startfile( destination )
+
 def analysResult2() :
 
     df = pd.read_excel( data["File"] )
