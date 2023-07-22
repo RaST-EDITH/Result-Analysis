@@ -14,26 +14,47 @@ def Imgo(file,w,h) :
     return pht
 
 def checkValue( start_range, end_range, spec_val ) :
-
-    if ( start_range.get() != "" and end_range.get() != "" and data["File"] != "" ) :
-        data["Start"] = int(start_range.get())
-        data["End"] = int(end_range.get())
-        data["Spec"] = spec_val.get().split(",")
-        if ( data["Spec"][0] == "" or data["Spec"][0] == "NA" ) :
-            data["Spec"] = []
-        else :
-            try :
-                for i in range( len(data["Spec"])) :
-                    data["Spec"][i] = int(data["Spec"][i])
-            except :
-                showerror( title = "Invalid Value", message = "Invalid Value Inserted!")
+    try :
+        if ( start_range.get() != "" and end_range.get() != "" and data["File"] != "" ) :
+            data["Start"] = int(start_range.get())
+            data["End"] = int(end_range.get())
+            data["Spec"] = spec_val.get().split(",")
+            if ( data["Spec"][0] == "" or data["Spec"][0] == "NA" ) :
+                data["Spec"] = []
+            else :
+                try :
+                    for i in range( len(data["Spec"])) :
+                        data["Spec"][i] = int(data["Spec"][i])
+                except :
+                    showerror( title = "Invalid Value", message = "Invalid Value Inserted!")
+                    return
+            
+            analysResult2()
         
-        analysResult()
-    
-    else :
-        showerror( title = "Empty Field", message = "Fill Empty Fields!")
+        elif ( ( start_range.get() == "" or start_range.get() == "NA" ) 
+                and ( end_range.get() == "" or end_range.get() == "NA" ) 
+                and data["File"] != "" ) :
+            data["Start"] = 0
+            data["End"] = 0
+            data["Spec"] = spec_val.get().split(",")
+            if ( data["Spec"][0] == "" or data["Spec"][0] == "NA" ) :
+                data["Spec"] = []
+                analysResult1()
+            else :
+                try :
+                    for i in range( len(data["Spec"])) :
+                        data["Spec"][i] = int(data["Spec"][i])
+                    analysResult2()
+                except :
+                    showerror( title = "Invalid Value", message = "Invalid Value Inserted!")
 
-def analysResult() :
+        else :
+            showerror( title = "Empty Field", message = "Incomplete Information!!")
+    
+    except :
+        showerror( title = "Invalid", message = "Invalid Entry!!")
+
+def analysResult2() :
 
     df = pd.read_excel( data["File"] )
 
