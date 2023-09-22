@@ -191,19 +191,23 @@ def analysResult2() :
     col_name = col_name[4:len(col_name)-4]
 
     facl_name = []
-    for i in range( len(col_name) ) :
-        facl = df[col_name[i]][0].split('/')
-        if ( len(facl) == 1) :
-            facl_name.extend([ facl[0], facl[0]])
-        else :
-            facl_name.extend([ facl[0], facl[1]])
+    try :
+        for i in range( len(col_name) ) :
+            facl = df[col_name[i]][0].split('/')
+            if ( len(facl) == 1) :
+                facl_name.extend([ facl[0], facl[0]])
+            else :
+                facl_name.extend([ facl[0], facl[1]])
+    except :
+        for i in range( len(col_name) ) :
+            facl_name.extend([df[col_name[i]][0], df[col_name[i]][0]])
 
     max_mark = []
     for i in range( len(col_name) ) :
         mark = df[col_name[i]][2]+df[unnamed_col[i]][2]
         max_mark.extend([ mark, mark])
 
-    branch = [ "IT1", "IT2"]*len(col_name)
+    branch = data["Branch"]*len(col_name)
 
     temp = []
     for i in col_name :
@@ -500,7 +504,8 @@ if __name__ == "__main__" :
         "File" : "",
         "Start" : 0,
         "End" : 0,
-        "Spec" : []
+        "Spec" : [],
+        "Branch" : [ "IT1", "IT2"]
     }
     font = [ "Tahoma", "Seoge UI", "Heloia", "Book Antiqua", "Microsoft Sans Serif"]
 
