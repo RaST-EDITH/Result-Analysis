@@ -13,7 +13,17 @@ def Imgo(file,w,h) :
     pht=ImageTk.PhotoImage(img.resize((w,h), Image.Resampling.LANCZOS ))
     return pht
 
+def countRange() :
+
+    df = pd.read_excel( data["File"] )
+    row, col = df.shape
+    roll = []
+    for _,y in enumerate(df[df.columns[1]][3:].astype('int64')) :
+        roll.append(y)
+    return roll
+
 def checkValue( start_range, end_range, spec_val ) :
+    
     try :
         if ( start_range.get() != "" and end_range.get() != "" and data["File"] != "" ) :
             data["Start"] = int(start_range.get())
@@ -374,7 +384,7 @@ def analysResult2() :
     destination = data["File"].split(".xlsx")[0]
     destination = destination + "_analysis.xlsx"
     writer = pd.ExcelWriter( destination )
-    analysis.to_excel( writer, "Marks ana", index = False )
+    analysis.to_excel( writer, "Marks analysis", index = False )
     writer.save()
     showinfo( title = "Done", message = "Analysis Done" )
     os.startfile( destination )
@@ -488,14 +498,13 @@ def firstPage() :
 
 if __name__ == "__main__" :
 
+    global root
+
     # Defining Main theme of all widgets
     ctk.set_appearance_mode( "dark" )
     ctk.set_default_color_theme( "dark-blue" )
     wid = 1200
     hgt = 700
-
-    global root
-
     root = ctk.CTk()
     root.title( "Result Analysis" )
     root.geometry( "1200x700+200+80" )
