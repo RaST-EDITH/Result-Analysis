@@ -35,4 +35,11 @@ def analysResult4() :
         for i in range( len(col_name) ) :
             facl_name.extend([df[col_name[i]][0]]*4)
 
+    max_mark = []
+    for i in range( len(col_name) ) :
+        mark = df[col_name[i]][2]+df[unnamed_col[i]][2]
+        max_mark.extend([ mark]*4)
+
+    branch = data["Branch"]*len(col_name)
+
 analysResult4()
