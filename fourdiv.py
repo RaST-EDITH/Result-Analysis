@@ -52,4 +52,19 @@ def analysResult4() :
         temp.extend([ i, "", "", ""])
     unnamed_col = temp[:]
 
+    sheet_structure = {
+        "Subject" : col_name,
+        "Faculty Name" : facl_name,
+        "Branch" : branch,
+        "Number of Students" : [i for i in range(len(col_name))],
+        "Absent" : [i for i in range(len(col_name))],
+        "Pass" : [i for i in range(len(col_name))],
+        "Less than 60%" : [i for i in range(len(col_name))],
+        "Between 60 to 74%" : [i for i in range(len(col_name))],
+        "More than 75%" : [i for i in range(len(col_name))],
+        "Maximum Score" : [i for i in range(len(col_name))],
+        "Out of Mark" : max_mark,
+        "Pass Percentage" : [i for i in range(len(col_name))],
+    }
+
 analysResult4()
