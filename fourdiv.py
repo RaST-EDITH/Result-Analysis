@@ -67,4 +67,18 @@ def analysResult4() :
         "Pass Percentage" : [i for i in range(len(col_name))],
     }
 
+    a1 = data["Start"][0]
+    a2 = data["Start"][1]
+    a3 = data["Start"][2]
+    b1 = data["End"][0]
+    b2 = data["End"][1]
+    b3 = data["End"][2]
+    spec1 = data["Spec"][0]
+    spec2 = data["Spec"][1]
+    spec3 = data["Spec"][2]
+
+    Branch_1 =  ( df[df.columns[1]][3:] >= a1 ) & ( df[df.columns[1]][3:] <= b1 )
+    Branch_2 =  ( df[df.columns[1]][3:] >= a2 ) & ( df[df.columns[1]][3:] <= b2 )
+    Branch_3 =  ( df[df.columns[1]][3:] >= a3 ) & ( df[df.columns[1]][3:] <= b3 )
+
 analysResult4()
