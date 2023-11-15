@@ -42,4 +42,14 @@ def analysResult4() :
 
     branch = data["Branch"]*len(col_name)
 
+    temp = []
+    for i in col_name :
+        temp.extend([ i, "", "", ""])
+    col_name = temp[:]
+
+    temp = []
+    for i in unnamed_col :
+        temp.extend([ i, "", "", ""])
+    unnamed_col = temp[:]
+
 analysResult4()
