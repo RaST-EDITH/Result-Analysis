@@ -19,4 +19,20 @@ def analysResult4() :
 
     col_name = col_name[4:len(col_name)-4]
 
+    facl_name = []
+    try :
+        for i in range( len(col_name) ) :
+            facl = df[col_name[i]][0].split('/')
+            if ( len(facl) == 1) :
+                facl_name.extend(facl*4)
+            elif ( len(facl) == 2) :
+                facl_name.extend(facl*2)
+            elif ( len(facl) == 3) :
+                facl_name.extend(facl + [""])
+            elif ( len(facl) == 4) :
+                facl_name.extend(facl)
+    except :
+        for i in range( len(col_name) ) :
+            facl_name.extend([df[col_name[i]][0]]*4)
+
 analysResult4()
