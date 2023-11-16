@@ -81,4 +81,19 @@ def analysResult4() :
     Branch_2 =  ( df[df.columns[1]][3:] >= a2 ) & ( df[df.columns[1]][3:] <= b2 )
     Branch_3 =  ( df[df.columns[1]][3:] >= a3 ) & ( df[df.columns[1]][3:] <= b3 )
 
+    if len(spec1) > 0 :
+        for x in spec :
+            sp = df[df.columns[1]][3:] == x
+            Branch_1 = Branch_1 | sp
+
+    if len(spec2) > 0 :
+        for x in spec :
+            sp = df[df.columns[1]][3:] == x
+            Branch_2 = Branch_2 | sp
+    
+    if len(spec3) > 0 :
+        for x in spec :
+            sp = df[df.columns[1]][3:] == x
+            Branch_3 = Branch_3 | sp
+
 analysResult4()
