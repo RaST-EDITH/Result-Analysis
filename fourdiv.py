@@ -96,4 +96,33 @@ def analysResult4() :
             sp = df[df.columns[1]][3:] == x
             Branch_3 = Branch_3 | sp
 
+    for i in range( 0, len(col_name), 4 ) :
+
+        # Student Count
+        student_count = df[col_name[i]][3:] >= 0
+        student_total = student_count.value_counts()[1]
+        student_count_1 = ( ~df[col_name[i]][3:].isnull() ) & student_count & Branch_1
+        student_count_1 = dict(student_count_1.value_counts())
+        count1 = 0
+        if True in student_count_1.keys() :
+            count1 = student_count_1[True]
+        
+        student_count_2 = ( ~df[col_name[i]][3:].isnull() ) & student_count & Branch_2
+        student_count_2 = dict(student_count_2.value_counts())
+        count2 = 0
+        if True in student_count_2.keys() :
+            count2 = student_count_2[True]
+        
+        student_count_3 = ( ~df[col_name[i]][3:].isnull() ) & student_count & Branch_3
+        student_count_3 = dict(student_count_3.value_counts())
+        count3 = 0
+        if True in student_count_3.keys() :
+            count3 = student_count_3[True]
+        
+        sheet_structure["Number of Students"][i] = count1
+        sheet_structure["Number of Students"][i+1] = count2
+        sheet_structure["Number of Students"][i+2] = count3
+        sheet_structure["Number of Students"][i+3] = student_total - count1 - count2 - count3
+
+
 analysResult4()
