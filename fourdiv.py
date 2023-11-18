@@ -125,4 +125,33 @@ def analysResult4() :
         sheet_structure["Number of Students"][i+3] = student_total - count1 - count2 - count3
 
 
+        # Absent Count
+        abs_count = df[col_name[i]][3:] == 0
+        count = dict(abs_count.value_counts())
+        abst = 0
+        if True in count.keys() :
+            abst = count[True]
+
+        abs_count = abs_count & Branch_1
+        count1 = dict(abs_count.value_counts())
+        abst1 = 0
+        if True in count1.keys() :
+            abst1 = count1[True]
+        
+        abs_count = abs_count & Branch_2
+        count2 = dict(abs_count.value_counts())
+        abst2 = 0
+        if True in count2.keys() :
+            abst2 = count2[True]
+        
+        abs_count = abs_count & Branch_3
+        count3 = dict(abs_count.value_counts())
+        abst3 = 0
+        if True in count3.keys() :
+            abst3 = count3[True]
+        sheet_structure["Absent"][i] = abst1
+        sheet_structure["Absent"][i+1] = abst2
+        sheet_structure["Absent"][i+2] = abst3
+        sheet_structure["Absent"][i+3] = abst - abst1 - abst2 - abst3
+
 analysResult4()
