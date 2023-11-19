@@ -154,4 +154,38 @@ def analysResult4() :
         sheet_structure["Absent"][i+2] = abst3
         sheet_structure["Absent"][i+3] = abst - abst1 - abst2 - abst3
 
+
+        # Less than 60
+        less_sixty = (df[col_name[i]][3:] + df[unnamed_col[i]][3:]) <= int(max_mark[i]*0.6)
+        val = dict(less_sixty.value_counts())
+        if True in val.keys() :
+            val = val[True]
+        else :
+            val = 0
+        
+        less_sixty = less_sixty & Branch_1
+        val1 = dict(less_sixty.value_counts())
+        if True in val1.keys() :
+            val1 = val1[True]
+        else :
+            val1 = 0
+        
+        less_sixty = less_sixty & Branch_2
+        val2 = dict(less_sixty.value_counts())
+        if True in val2.keys() :
+            val2 = val2[True]
+        else :
+            val2 = 0
+        
+        less_sixty = less_sixty & Branch_3
+        val3 = dict(less_sixty.value_counts())
+        if True in val3.keys() :
+            val3 = val3[True]
+        else :
+            val3 = 0
+        sheet_structure["Less than 60%"][i] = val1
+        sheet_structure["Less than 60%"][i+1] = val2
+        sheet_structure["Less than 60%"][i+2] = val3
+        sheet_structure["Less than 60%"][i+3] = val - val1 - val2 - val3
+
 analysResult4()
