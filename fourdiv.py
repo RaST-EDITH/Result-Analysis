@@ -188,4 +188,40 @@ def analysResult4() :
         sheet_structure["Less than 60%"][i+2] = val3
         sheet_structure["Less than 60%"][i+3] = val - val1 - val2 - val3
 
+
+        # Between 60 and 75
+        sixty = (df[col_name[i]][3:] + df[unnamed_col[i]][3:]) > int(max_mark[i]*0.6)
+        seventy = (df[col_name[i]][3:] + df[unnamed_col[i]][3:]) < int(max_mark[i]*0.75)
+        btw_sixty_seventy = sixty & seventy
+        val = dict(btw_sixty_seventy.value_counts())
+        if True in val.keys() :
+            val = val[True]
+        else :
+            val = 0
+
+        btw_sixty_seventy = btw_sixty_seventy & Branch_1
+        val1 = dict(btw_sixty_seventy.value_counts())
+        if True in val1.keys() :
+            val1 = val1[True]
+        else :
+            val1 = 0
+        
+        btw_sixty_seventy = btw_sixty_seventy & Branch_2
+        val2 = dict(btw_sixty_seventy.value_counts())
+        if True in val2.keys() :
+            val2 = val2[True]
+        else :
+            val2 = 0
+        
+        btw_sixty_seventy = btw_sixty_seventy & Branch_3
+        val3 = dict(btw_sixty_seventy.value_counts())
+        if True in val3.keys() :
+            val3 = val3[True]
+        else :
+            val3 = 0
+        sheet_structure["Between 60 to 74%"][i] = val1
+        sheet_structure["Between 60 to 74%"][i+1] = val2
+        sheet_structure["Between 60 to 74%"][i+2] = val3
+        sheet_structure["Between 60 to 74%"][i+3] = val - val1 - val2 - val3
+
 analysResult4()
