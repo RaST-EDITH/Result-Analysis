@@ -258,4 +258,16 @@ def analysResult4() :
         sheet_structure["More than 75%"][i+2] = val3
         sheet_structure["More than 75%"][i+3] = val - val1 - val2 - val3
 
+
+        # Maximum Score
+        max_score = (df[col_name[i]][3:] + df[unnamed_col[i]][3:])
+        p1 = max_score & Branch_1
+        p2 = max_score & Branch_2
+        p3 = max_score & Branch_3
+        p4 = p1 & p2 & p3
+        sheet_structure["Maximum Score"][i] = max_score[p1].max()
+        sheet_structure["Maximum Score"][i+1] = max_score[p2].max()
+        sheet_structure["Maximum Score"][i+2] = max_score[p3].max()
+        sheet_structure["Maximum Score"][i+3] = max_score[~p4].max()
+
 analysResult4()
