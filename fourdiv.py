@@ -224,4 +224,38 @@ def analysResult4() :
         sheet_structure["Between 60 to 74%"][i+2] = val3
         sheet_structure["Between 60 to 74%"][i+3] = val - val1 - val2 - val3
 
+
+        # More Than 75
+        more_seventy = (df[col_name[i]][3:] + df[unnamed_col[i]][3:]) >= max_mark[i]*0.75
+        val = dict(more_seventy.value_counts())
+        if True in val.keys() :
+            val = val[True]
+        else :
+            val = 0
+        
+        more_seventy = more_seventy & Branch_1
+        val1 = dict(more_seventy.value_counts())
+        if True in val1.keys() :
+            val1 = val1[True]
+        else :
+            val1 = 0
+        
+        more_seventy = more_seventy & Branch_2
+        val2 = dict(more_seventy.value_counts())
+        if True in val2.keys() :
+            val2 = val2[True]
+        else :
+            val2 = 0
+        
+        more_seventy = more_seventy & Branch_3
+        val3 = dict(more_seventy.value_counts())
+        if True in val3.keys() :
+            val3 = val3[True]
+        else :
+            val3 = 0
+        sheet_structure["More than 75%"][i] = val1
+        sheet_structure["More than 75%"][i+1] = val2
+        sheet_structure["More than 75%"][i+2] = val3
+        sheet_structure["More than 75%"][i+3] = val - val1 - val2 - val3
+
 analysResult4()
