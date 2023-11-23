@@ -270,4 +270,42 @@ def analysResult4() :
         sheet_structure["Maximum Score"][i+2] = max_score[p3].max()
         sheet_structure["Maximum Score"][i+3] = max_score[~p4].max()
 
+
+        # Number of Student Passed
+        pass_1 = df[col_name[i]][3:] >= df[col_name[i]][2]*0.3
+        pass_2 = df[unnamed_col[i]][3:] >= df[unnamed_col[i]][2]*0.3
+        pass_3 = (df[col_name[i]][3:] + df[unnamed_col[i]][3:]) >= max_mark[i]*0.4
+        final_pass = pass_1 & pass_2
+        final_pass = final_pass & pass_3
+        val = dict(final_pass.value_counts())
+        if True in val.keys() :
+            val = val[True]
+        else :
+            val = 0
+
+        final_pass1 = final_pass & Branch_1
+        val1 = dict(final_pass1.value_counts())
+        if True in val1.keys() :
+            val1 = val1[True]
+        else :
+            val1 = 0
+        
+        final_pass2 = final_pass & Branch_2
+        val2 = dict(final_pass2.value_counts())
+        if True in val2.keys() :
+            val2 = val2[True]
+        else :
+            val2 = 0
+        
+        final_pass3 = final_pass & Branch_3
+        val3 = dict(final_pass3.value_counts())
+        if True in val3.keys() :
+            val3 = val3[True]
+        else :
+            val3 = 0
+        sheet_structure["Pass"][i] = val1
+        sheet_structure["Pass"][i+1] = val2
+        sheet_structure["Pass"][i+2] = val3
+        sheet_structure["Pass"][i+3] = val - val1 - val2 - val3
+
 analysResult4()
