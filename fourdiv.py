@@ -308,4 +308,23 @@ def analysResult4() :
         sheet_structure["Pass"][i+2] = val3
         sheet_structure["Pass"][i+3] = val - val1 - val2 - val3
 
+
+        # Total Percentage Student Passed
+        s1 = sheet_structure["Number of Students"][i]
+        if s1 == 0 :
+            s1 = 1
+        s2 = sheet_structure["Number of Students"][i+1]
+        if s2 == 0 :
+            s2 = 1
+        s3 = sheet_structure["Number of Students"][i+2]
+        if s3 == 0 :
+            s3 = 1
+        s4 = sheet_structure["Number of Students"][i+3]
+        if s4 == 0 :
+            s4 = 1
+        sheet_structure["Pass Percentage"][i] = round(((sheet_structure["Pass"][i])/s1*100), 2)
+        sheet_structure["Pass Percentage"][i+1] = round(((sheet_structure["Pass"][i+1])/s2*100), 2)
+        sheet_structure["Pass Percentage"][i+2] = round(((sheet_structure["Pass"][i+2])/s3*100), 2)
+        sheet_structure["Pass Percentage"][i+3] = round(((sheet_structure["Pass"][i+3])/s4*100), 2)
+
 analysResult4()
