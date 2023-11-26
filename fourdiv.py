@@ -327,4 +327,21 @@ def analysResult4() :
         sheet_structure["Pass Percentage"][i+2] = round(((sheet_structure["Pass"][i+2])/s3*100), 2)
         sheet_structure["Pass Percentage"][i+3] = round(((sheet_structure["Pass"][i+3])/s4*100), 2)
 
+    analysis = pd.DataFrame( sheet_structure )
+    destination = data["File"].split(".xlsx")[0]
+    destination = destination + "_analysis.xlsx"
+    writer = pd.ExcelWriter( destination )
+    analysis.to_excel( writer, "Marks analysis", index = False )
+    writer.save()
+    # showinfo( title = "Done", message = "Analysis Done" )
+    os.startfile( destination )
+
+data = {
+    "File" : # File Path,
+    "Start" : # List of Staring Roll No,
+    "End" : # List of Ending Roll No,
+    "Spec" : # List of List of Specific Roll No,
+    "Branch" : # List of Branch Name
+}
+
 analysResult4()
