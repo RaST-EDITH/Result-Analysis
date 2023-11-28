@@ -337,11 +337,11 @@ def analysResult4() :
     os.startfile( destination )
 
 data = {
-    "File" : # File Path,
-    "Start" : # List of Staring Roll No,
-    "End" : # List of Ending Roll No,
-    "Spec" : # List of List of Specific Roll No,
-    "Branch" : # List of Branch Name
+    "File" : 'File Path' ,
+    "Start" : [ 'Start Roll No 1', 'Start Roll No 2', 'Start Roll No 3' ],
+    "End" : [ 'End Roll No 1', 'End Roll No 2', 'End Roll No 3' ],
+    "Spec" : [['Specific Roll Number'],['Specific Roll Number'],['Specific Roll Number']],
+    "Branch" : [ 'Branch 1 Name', 'Branch 2 Name', 'Branch 3 Name', 'Branch 4 Name']
 }
 
 analysResult4()

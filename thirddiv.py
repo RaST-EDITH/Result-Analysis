@@ -274,11 +274,11 @@ def analysResult3() :
     os.startfile( destination )
 
 data = {
-    "File" : r"C:\Users\ASUS\OneDrive\Documents\GitHub\Result-Analysis\try_multi.xlsx",
-    "Start" : [2100910130001, 2100910130031],
-    "End" : [2100910130029, 2100910130039],
-    "Spec" : [[],[]],
-    "Branch" : ["1","2","3"]
+    "File" : 'File Path' ,
+    "Start" : [ 'Start Roll No 1', 'Start Roll No 2' ],
+    "End" : [ 'End Roll No 1', 'End Roll No 2' ],
+    "Spec" : [['Specific Roll Number'],['Specific Roll Number']],
+    "Branch" : [ 'Branch 1 Name', 'Branch 2 Name', 'Branch 3 Name']
 }
 
 analysResult3()
