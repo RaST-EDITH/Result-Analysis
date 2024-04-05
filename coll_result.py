@@ -485,7 +485,7 @@ def firstPage() :
                                     border_color = "#00234f", border_width = 4)
     spec_val_win = id_page.create_window( 80, 350+30+140, anchor = "nw", window = spec_val )
 
-    # Adding file path
+    # Analysing the file
     analy_bt = ctk.CTkButton( master = root, 
                              text = "Analyse", text_font = ( font[1], 20 ), 
                               width = 60, height = 40, corner_radius = 14,
