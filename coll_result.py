@@ -245,28 +245,23 @@ def analysResult2() :
 
         # Student Count
         student_count = df[col_name[i]][3:] >= 0
-        student_val = student_count.value_counts()[1]
+        student_total = dict(student_count.value_counts())
+        student_total = student_total.get(True,0)
         student_count = ( ~df[col_name[i]][3:].isnull() ) & student_count & Branch_1
         student_count = dict(student_count.value_counts())
-        count = 0
-        if True in student_count.keys() :
-            count = student_count[True]
+        count = student_count.get(True,0)
         sheet_structure["Number of Students"][i] = count
-        sheet_structure["Number of Students"][i+1] = student_val - count
+        sheet_structure["Number of Students"][i+1] = student_total - count
 
 
         # Absent Count
         abs_count = df[col_name[i]][3:] == 0
         count = dict(abs_count.value_counts())
-        abst = 0
-        if True in count.keys() :
-            abst = count[True]
+        abst = count.get(True,0)
 
         abs_count = abs_count & Branch_1
         count1 = dict(abs_count.value_counts())
-        abst1 = 0
-        if True in count1.keys() :
-            abst1 = count1[True]
+        abst1 = count1.get(True,0)
         sheet_structure["Absent"][i] = abst1
         sheet_structure["Absent"][i+1] = abst - abst1
         
@@ -274,17 +269,11 @@ def analysResult2() :
         # Less than 60
         less_sixty = (df[col_name[i]][3:] + df[unnamed_col[i]][3:]) <= int(max_mark[i]*0.6)
         val = dict(less_sixty.value_counts())
-        if True in val.keys() :
-            val = val[True]
-        else :
-            val = 0
+        val = val.get(True,0)
         
         less_sixty = less_sixty & Branch_1
         val1 = dict(less_sixty.value_counts())
-        if True in val1.keys() :
-            val1 = val1[True]
-        else :
-            val1 = 0
+        val1 = val1.get(True,0)
         sheet_structure["Less than 60%"][i] = val1
         sheet_structure["Less than 60%"][i+1] = val - val1
 
@@ -294,17 +283,11 @@ def analysResult2() :
         seventy = (df[col_name[i]][3:] + df[unnamed_col[i]][3:]) < int(max_mark[i]*0.75)
         btw_sixty_seventy = sixty & seventy
         val = dict(btw_sixty_seventy.value_counts())
-        if True in val.keys() :
-            val = val[True]
-        else :
-            val = 0
+        val = val.get(True,0)
 
         btw_sixty_seventy = btw_sixty_seventy & Branch_1
         val1 = dict(btw_sixty_seventy.value_counts())
-        if True in val1.keys() :
-            val1 = val1[True]
-        else :
-            val1 = 0
+        val1 = val1.get(True,0)
         sheet_structure["Between 60 to 74%"][i] = val1
         sheet_structure["Between 60 to 74%"][i+1] = val - val1
 
@@ -312,17 +295,11 @@ def analysResult2() :
         # More Than 75
         more_seventy = (df[col_name[i]][3:] + df[unnamed_col[i]][3:]) >= max_mark[i]*0.75
         val = dict(more_seventy.value_counts())
-        if True in val.keys() :
-            val = val[True]
-        else :
-            val = 0
+        val = val.get(True,0)
         
         more_seventy = more_seventy & Branch_1
         val1 = dict(more_seventy.value_counts())
-        if True in val1.keys() :
-            val1 = val1[True]
-        else :
-            val1 = 0
+        val1 = val1.get(True,0)
         sheet_structure["More than 75%"][i] = val1
         sheet_structure["More than 75%"][i+1] = val - val1
 
@@ -341,38 +318,26 @@ def analysResult2() :
         final_pass = pass_1 & pass_2
         final_pass = final_pass & pass_3
         val = dict(final_pass.value_counts())
-        if True in val.keys() :
-            val = val[True]
-        else :
-            val = 0
+        val = val.get(True,0)
 
         final_pass = final_pass & Branch_1
         val1 = dict(final_pass.value_counts())
-        if True in val1.keys() :
-            val1 = val1[True]
-        else :
-            val1 = 0
+        val1 = val1.get(True,0)
         sheet_structure["Pass"][i] = val1
         sheet_structure["Pass"][i+1] = val - val1
 
 
         # Total Percentage Student Passed
-        s1 = sheet_structure["Number of Students"][i]
-        if s1 == 0 :
-            s1 = 1
-        s2 = sheet_structure["Number of Students"][i+1]
-        if s2 == 0 :
-            s2 = 1
-        sheet_structure["Pass Percentage"][i] = ((sheet_structure["Pass"][i])/s1*100)
-        sheet_structure["Pass Percentage"][i+1] = ((sheet_structure["Pass"][i+1])/s2*100)
+        s1 = max(1,sheet_structure["Number of Students"][i])
+        s2 = max(1,sheet_structure["Number of Students"][i+1])
+        sheet_structure["Pass Percentage"][i] = round(((sheet_structure["Pass"][i])/s1*100), 2)
+        sheet_structure["Pass Percentage"][i+1] = round(((sheet_structure["Pass"][i+1])/s2*100), 2)
 
     analysis = pd.DataFrame( sheet_structure )
     destination = data["File"].split(".xlsx")[0]
     destination = destination + "_analysis.xlsx"
-    writer = pd.ExcelWriter( destination )
-    analysis.to_excel( writer, "Marks analysis", index = False )
-    writer.save()
-    showinfo( title = "Done", message = "Analysis Done" )
+    with pd.ExcelWriter( path=destination ) as writer:
+        analysis.to_excel(writer, sheet_name="Marks analysis", index=False)
     os.startfile( destination )
 
 def openingFile( file_path, file_formate ) :
