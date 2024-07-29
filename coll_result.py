@@ -66,7 +66,10 @@ def checkValue( start_range, end_range, spec_val ) :
 
 def analysResult1() :
 
-    df = pd.read_excel( data["File"] )
+    if ( specific_sheet != None ) :
+        df = pd.read_excel( data["File"] , sheet_name=specific_sheet)
+    else :
+        df = pd.read_excel( data["File"] )
 
     row, col = df.shape
     row = row - 3
@@ -94,8 +97,10 @@ def analysResult1() :
         "Subject" : col_name,
         "Faculty Name" : facl_name,
         "Number of Students" : [i for i in range(len(col_name))],
-        "Absent" : [i for i in range(len(col_name))],
         "Pass" : [i for i in range(len(col_name))],
+        "PCP" : [i for i in range(len(col_name))],
+        "Absent" : [i for i in range(len(col_name))],
+        "Students with no result" : [i for i in range(len(col_name))],
         "Less than 60%" : [i for i in range(len(col_name))],
         "Between 60 to 74%" : [i for i in range(len(col_name))],
         "More than 75%" : [i for i in range(len(col_name))],
@@ -106,40 +111,60 @@ def analysResult1() :
 
     for i in range( len(col_name) ) :
 
-        # Student Count
+        # Absent Students Count
+        abs_count = df[col_name[i]].apply(lambda x: isinstance(x, str))
+        abst = df[abs_count][col_name[i]].eq('ABS').sum()
+        sheet_structure["Absent"][i] = abst
+
+        # Students With no Result Count
+        no_result = df[col_name[i]].apply(lambda x: isinstance(x, str))
+        no_result_count = df[no_result][col_name[i]].eq("###").sum()
+        sheet_structure["Students with no result"][i] = no_result_count
+        
+        # Replacing ABS
+        if ( abst>0 ) :
+            df[col_name[i]] = df[col_name[i]].replace("ABS", 0)
+
+        # Replacing "###"
+        if ( no_result_count>0 ) :
+            df[col_name[i]] = df[col_name[i]].replace("###", 0)
+    
+    # Checking "ABS" for overall sheet
+    abst = (df == 'ABS').sum().sum()
+    if ( abst>0 ) :
+        df = df.replace("ABS", 0)
+    
+    # Checking "###" for overall sheet
+    un_diclare = (df == '###').sum().sum()
+    if ( un_diclare>0 ) :
+        df = df.replace("###", 0)
+
+    for i in range( len(col_name) ) :
+
+        # Students Count
         student_count = df[col_name[i]][3:] >= 0
         store = dict(student_count.value_counts())
         sheet_structure["Number of Students"][i] = store.get(True,0)
 
 
-        # Absent Count
-        abs_count = df[col_name[i]][3:] == 0
-        abs_count = dict(abs_count.value_counts())
-        abst = abs_count.get(True,0)
-        sheet_structure["Absent"][i] = abst
-        
-
         # Less Than 60
-        less_sixty = (df[col_name[i]][3:] + df[unnamed_col[i]][3:]) <= int(max_mark[i]*0.6)
-        val = dict(less_sixty.value_counts())
-        val = val.get(True,0)
-        sheet_structure["Less than 60%"][i] = val
+        less_than_sixty = (df[col_name[i]][3:] + df[unnamed_col[i]][3:]) <= int(max_mark[i]*0.6)
+        less_than_sixty_val = dict(less_than_sixty.value_counts())
+        sheet_structure["Less than 60%"][i] = less_than_sixty_val.get(True,0) - sheet_structure["Students with no result"][i] - sheet_structure["Absent"][i]
 
 
         # Between 60 and 75
         sixty = (df[col_name[i]][3:] + df[unnamed_col[i]][3:]) > int(max_mark[i]*0.6)
         seventy = (df[col_name[i]][3:] + df[unnamed_col[i]][3:]) < int(max_mark[i]*0.75)
         btw_sixty_seventy = sixty & seventy
-        val = dict(btw_sixty_seventy.value_counts())
-        val = val.get(True,0)
-        sheet_structure["Between 60 to 74%"][i] = val
+        btw_sixty_seventy_val = dict(btw_sixty_seventy.value_counts())
+        sheet_structure["Between 60 to 74%"][i] = btw_sixty_seventy_val.get(True,0)
 
 
         # More Than 75
-        more_seventy = (df[col_name[i]][3:] + df[unnamed_col[i]][3:]) >= max_mark[i]*0.75
-        val = dict(more_seventy.value_counts())
-        val = val.get(True,0)
-        sheet_structure["More than 75%"][i] = val
+        more_than_seventy = (df[col_name[i]][3:] + df[unnamed_col[i]][3:]) >= max_mark[i]*0.75
+        more_than_seventy_val = dict(more_than_seventy.value_counts())
+        sheet_structure["More than 75%"][i] = more_than_seventy_val.get(True,0)
 
 
         # Maximum Score
@@ -153,20 +178,24 @@ def analysResult1() :
         pass_3 = (df[col_name[i]][3:] + df[unnamed_col[i]][3:]) >= max_mark[i]*0.4
         final_pass = pass_1 & pass_2
         final_pass = final_pass & pass_3
-        val = dict(final_pass.value_counts())
-        val = val.get(True,0)
-        sheet_structure["Pass"][i] = val
+        final_pass_val = dict(final_pass.value_counts())
+        sheet_structure["Pass"][i] = final_pass_val.get(True,0)
 
+        # PCP -> Not Pass
+        sheet_structure["PCP"][i] = final_pass_val.get(False,0) - sheet_structure["Absent"][i] - sheet_structure["Students with no result"][i]
 
         # Total Percentage Of Student Passed
-        sheet_structure["Pass Percentage"][i] = ((sheet_structure["Pass"][i])/(sheet_structure["Number of Students"][i])*100)
+        sheet_structure["Pass Percentage"][i] = round(((sheet_structure["Pass"][i])/(sheet_structure["Number of Students"][i] - sheet_structure["Students with no result"][i] - sheet_structure["Absent"][i])*100),2)
 
+    if ( specific_sheet != None ) :
+        return sheet_structure
+    
     analysis = pd.DataFrame( sheet_structure )
     destination = data["File"].split(".xlsx")[0]
     destination = destination + "_analysis.xlsx"
     with pd.ExcelWriter( path=destination ) as writer:
         analysis.to_excel(writer, sheet_name="Marks analysis", index=False)
-    os.startfile( destination )
+    # os.startfile( destination )
 
 def analysResult2() :
 
