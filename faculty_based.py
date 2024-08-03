@@ -1,4 +1,4 @@
-from firstdiv import single_branch_analysis
+from coll_result import analysResult1
 import pandas as pd
 import os
 
@@ -9,10 +9,13 @@ def faculty_base_analysis_for_all_sem(data) :
     overall_analysis = {
         "Faculty Name" : [],
         "Semester" : [],
+        "Semester and Branch" : [],
         "Subject" : [],
         "Number of Students" : [],
-        "Absent" : [],
         "Pass" : [],
+        "PCP" : [],
+        "Absent" : [],
+        "Students with no result" : [],
         "Less than 60%" : [],
         "Between 60 to 74%" : [],
         "More than 75%" : [],
@@ -24,10 +27,13 @@ def faculty_base_analysis_for_all_sem(data) :
     more_than_one_faculty = {
         "Faculty Name" : [],
         "Semester" : [],
+        "Semester and Branch" : [],
         "Subject" : [],
         "Number of Students" : [],
-        "Absent" : [],
         "Pass" : [],
+        "PCP" : [],
+        "Absent" : [],
+        "Students with no result" : [],
         "Less than 60%" : [],
         "Between 60 to 74%" : [],
         "More than 75%" : [],
@@ -36,9 +42,15 @@ def faculty_base_analysis_for_all_sem(data) :
         "Pass Percentage" : []
     }
 
-    for sem in file_object.sheet_names :
-        result = single_branch_analysis(data,sem)
+    for sem_branch_name in file_object.sheet_names :
+
+        sem = int(sem_branch_name.split()[0])
+        result = analysResult1(data,sem_branch_name)
+
         result["Semester"] = [int(sem)]*len(result["Subject"])
+        result["Semester and Branch"] = [sem_branch_name]*len(result["Subject"])
+
+        # Unequal Length Error handling
         for key, val in result.items() :
             overall_analysis[key].extend(val)
 
@@ -56,9 +68,20 @@ def faculty_base_analysis_for_all_sem(data) :
         overall_analysis[key].extend(val)
 
     df = pd.DataFrame( overall_analysis )
-    sorted_df = df.sort_values( by=["Faculty Name","Semester"])
+    sorted_df = df.sort_values( by=["Faculty Name","Semester"], ignore_index = True )
     even_df = sorted_df[sorted_df["Semester"]%2 == 0]
     odd_df = sorted_df[sorted_df["Semester"]%2 != 0]
+    del sorted_df["Semester"]
+    del even_df["Semester"]
+    del odd_df["Semester"]
+
+    mask = even_df["Faculty Name"] == even_df["Faculty Name"].shift()
+    even_df.loc[mask, "Faculty Name"] = " "
+    mask = odd_df["Faculty Name"] == odd_df["Faculty Name"].shift()
+    odd_df.loc[mask, "Faculty Name"] = " "
+    mask = sorted_df["Faculty Name"] == sorted_df["Faculty Name"].shift()
+    sorted_df.loc[mask, "Faculty Name"] = " "
+
     destination = data["File"].split(".xlsx")[0]
     destination = destination + "_faculty_basis_analysis.xlsx"
 
@@ -70,7 +93,8 @@ def faculty_base_analysis_for_all_sem(data) :
 
 if ( __name__=="__main__" ) :
 
+    # Data must be passed using this
     data = {
-        "File" : "File path"
+        "File" : "File Path"
     }
     faculty_base_analysis_for_all_sem(data)

@@ -64,7 +64,7 @@ def checkValue( start_range, end_range, spec_val ) :
     except :
         showerror( title = "Invalid", message = "Invalid Entry!!")
 
-def analysResult1() :
+def analysResult1(data, specific_sheet=None ) :
 
     if ( specific_sheet != None ) :
         df = pd.read_excel( data["File"] , sheet_name=specific_sheet)
